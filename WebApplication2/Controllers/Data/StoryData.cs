@@ -22,11 +22,7 @@ namespace WebApplication2.Controllers.Data
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-                INSERT INTO Stories (
-                    Type, Title, Image, Status, AuthorId, Description, 
-                    Posted, Followers, Favorites, Views
-                ) 
-                OUTPUT INSERTED.Id 
+                INSERT INTO Stories (Type, Title, Image, Status, AuthorId, Description, Posted, Followers, Favorites, Views) OUTPUT INSERTED.Id 
                 VALUES (
                     @Type, @Title, @Image, @Status, @AuthorId, @Description, 
                     @Posted, @Followers, @Favorites, @Views
@@ -49,14 +45,11 @@ namespace WebApplication2.Controllers.Data
             return storyId;
         }
 
-        // Read (Get by Id)
         public Story? GetStoryById(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-                SELECT Id, Type, Title, Image, Status, AuthorId, Description, 
-                       Posted, Followers, Favorites, Views 
-                FROM Stories 
+                SELECT Id, Type, Title, Image, Status, AuthorId, Description, Posted, Followers, Favorites, Views FROM Stories 
                 WHERE Id = @Id", conn);
 
             cmd.Parameters.AddWithValue("@Id", id);
@@ -94,8 +87,7 @@ namespace WebApplication2.Controllers.Data
             var stories = new List<Story>();
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-                SELECT Id, Type, Title, Image, Status, AuthorId, Description, 
-                       Posted, Followers, Favorites, Views 
+                SELECT Id, Type, Title, Image, Status, AuthorId, Description, Posted, Followers, Favorites, Views 
                 FROM Stories", conn);
 
             conn.Open();

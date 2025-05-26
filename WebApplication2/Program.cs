@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Register Data and Business classes for DI
+// Register data and business classes 
 builder.Services.AddScoped<WebApplication2.Controllers.Data.AuthorData>();
 builder.Services.AddScoped<WebApplication2.Controllers.Data.StoryData>();
 builder.Services.AddScoped<WebApplication2.Controllers.Business.AuthorBusiness>();
@@ -33,6 +33,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}");
 
+// initialize the database with dummy data if its empty
 using (var connection = new SqlConnection("data source=DESKTOP-7T1RFUV\\SQLEXPRESS;initial catalog=WebWriter;trusted_connection=true;TrustServerCertificate=true"))
 {
     connection.Open();

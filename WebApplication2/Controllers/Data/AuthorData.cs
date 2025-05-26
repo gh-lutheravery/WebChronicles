@@ -19,9 +19,15 @@ namespace WebApplication2.Controllers.Data
         public int CreateAuthor(Author author)
         {
             using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("INSERT INTO Authors (Name, Bio) OUTPUT INSERTED.Id VALUES (@Name, @Bio)", conn);
+            using var cmd = new SqlCommand("INSERT INTO Authors (Name, Bio, Title, Avatar, Email, Password, Joined) OUTPUT INSERTED.Id VALUES (@Name, @Bio, @Title, @Avatar," +
+                "                            @Email, @Password, @Joined)", conn);
             cmd.Parameters.AddWithValue("@Name", author.Name ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Bio", author.Bio ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Title", author.Title ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Avatar", author.Avatar ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Email", author.Email ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Password", author.Password ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Joined", author.Joined);
 
             conn.Open();
             return (int)cmd.ExecuteScalar();
@@ -51,7 +57,7 @@ namespace WebApplication2.Controllers.Data
         {
             var authors = new List<Author>();
             using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT Id, Name, Bio FROM Authors", conn);
+            using var cmd = new SqlCommand("SELECT Id, Name, Bio, Title, Joined FROM Authors", conn);
 
             conn.Open();
             using var reader = cmd.ExecuteReader();
@@ -61,32 +67,12 @@ namespace WebApplication2.Controllers.Data
                 {
                     Id = reader.GetInt32(0),
                     Name = reader.IsDBNull(1) ? null : reader.GetString(1),
-                    Bio = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    Bio = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    Title = reader.IsDBNull(3) ? null : reader.GetString(3),
+                    Joined = reader.GetDateTime(4),
                 });
             }
             return authors;
-        }
-
-        public bool UpdateAuthor(Author author)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("UPDATE Authors SET Name = @Name, Bio = @Bio WHERE Id = @Id", conn);
-            cmd.Parameters.AddWithValue("@Id", author.Id);
-            cmd.Parameters.AddWithValue("@Name", author.Name ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Bio", author.Bio ?? (object)DBNull.Value);
-
-            conn.Open();
-            return cmd.ExecuteNonQuery() > 0;
-        }
-
-        public bool DeleteAuthor(int id)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("DELETE FROM Authors WHERE Id = @Id", conn);
-            cmd.Parameters.AddWithValue("@Id", id);
-
-            conn.Open();
-            return cmd.ExecuteNonQuery() > 0;
         }
     }
 }

@@ -19,9 +19,10 @@ namespace WebApplication2.Controllers.Http
         }
 
         // GET: AuthorController
-        public ActionResult Index()
+        public ActionResult List()
         {
-            return View();
+            List<Author> authors = _authorBusiness.GetAllAuthors();
+            return View(authors);
         }
 
         // GET: AuthorController/Details/5
@@ -31,7 +32,7 @@ namespace WebApplication2.Controllers.Http
         }
 
         // GET: AuthorController/Create
-        public ActionResult Create()
+        public ActionResult Register()
         {
             var vm = new RegisterViewModel();
             return View("Register", vm);
@@ -40,12 +41,12 @@ namespace WebApplication2.Controllers.Http
         // POST: AuthorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(RegisterViewModel vm)
+        public ActionResult Register(RegisterViewModel vm)
         {
             if (ModelState.IsValid)
             {
                 _authorBusiness.Register(vm, new PasswordHasher<Author>());
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction("Index", "Home");
             }
             else
             {
