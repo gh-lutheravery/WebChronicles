@@ -1,0 +1,42 @@
+﻿@model List<WebApplication2.Models.Story>
+@{
+    ViewData["Title"] = "Stories";
+}
+
+<h2>Stories</h2>
+
+@if (!Model.Any())
+{
+    <p>No stories found.</p>
+}
+else
+{
+
+        @foreach (var story in Model)
+        {
+            <div class="media box" id="post">
+                @if (!string.IsNullOrEmpty(story.Image))
+                {
+                    <img src="@story.Image" alt="Image" style="max-width:100px;max-height:100px;" />
+                }
+                <span class="mini-media-rows">
+                    <span class="pl-2 pr-2">@story.Author?.Name</span>
+                    <span class="pl-2 pr-2">@story.Posted.ToString("yyyy-MM-dd")</span>
+                </span>
+                <div class="media-body" style="width: 87%;">
+                    <h4 class="mt-0 soc-post-title">
+                        <a asp-controller="Story" asp-action="Details" asp-route-id="@story.Id">@story.Title</a>
+                    </h4>
+
+                    <p class="text-muted has-text-grey">@story.Description</p>
+                    <div class="d-flex justify-content-around prevent-overflow">
+                        @* @foreach (var tag in @question.Tags)
+                        {
+                            <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
+                        } *@
+                    </div>
+                </div>
+            </div>
+        }
+
+}
