@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication2.Controllers.Business;
 using WebApplication2.Controllers.Data;
 using WebApplication2.ViewModels;
+using WebChronicles.Controllers.Business;
 
-namespace WebApplication2.Controllers.Http
+namespace WebChronicles.Controllers.Http
 {
     public class HomeController : Controller
     {

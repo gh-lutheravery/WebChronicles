@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApplication2.Models;
-using WebApplication2.Controllers.Data;
 using Microsoft.AspNetCore.Identity;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using WebApplication5.ViewModels.User;
+using WebChronicles.Models;
+using WebChronicles.Controllers.Data;
+using WebChronicles.ViewModels;
 
-namespace WebApplication2.Controllers.Business
+namespace WebChronicles.Controllers.Business
 {
     public class AuthorBusiness
     {
@@ -20,6 +20,11 @@ namespace WebApplication2.Controllers.Business
         public List<Author> GetAllAuthors()
         {
             return _authorData.GetAllAuthors();
+        }
+
+        public Author GetAuthor(int id) 
+        {
+            return _authorData.GetAuthorById(id);
         }
 
         public void Register(RegisterViewModel vm, PasswordHasher<Author> hasher)

@@ -1,4 +1,4 @@
-namespace WebApplication2.ViewModels
+namespace WebChronicles.ViewModels
 {
     public class ErrorViewModel
     {

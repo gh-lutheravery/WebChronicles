@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace WebApplication2.Controllers.Data
+namespace WebChronicles.Controllers.Data
 {
     public class DataInit
     {
@@ -36,7 +36,7 @@ namespace WebApplication2.Controllers.Data
                 command.Parameters.AddWithValue("@Title", $"Epic Tale {i}");
                 command.Parameters.AddWithValue("@Image", $"https://images.example.com/story{i}.jpg");
                 command.Parameters.AddWithValue("@Status", i % 2 == 0 ? "Ongoing" : "Completed");
-                command.Parameters.AddWithValue("@AuthorId", (i % 10) + 1); // Ensure 1–10
+                command.Parameters.AddWithValue("@AuthorId", i % 10 + 1); // Ensure 1–10
                 command.Parameters.AddWithValue("@Description", $"This is the description of story {i}");
                 command.Parameters.AddWithValue("@Posted", DateTime.Today.AddDays(-i));
                 command.Parameters.AddWithValue("@Followers", 100 + i);

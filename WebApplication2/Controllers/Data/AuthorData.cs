@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using WebApplication2.Models;
 using Microsoft.Extensions.Configuration;
+using WebChronicles.Models;
 
-namespace WebApplication2.Controllers.Data
+namespace WebChronicles.Controllers.Data
 {
     public class AuthorData
     {
@@ -18,61 +18,163 @@ namespace WebApplication2.Controllers.Data
 
         public int CreateAuthor(Author author)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("INSERT INTO Authors (Name, Bio, Title, Avatar, Email, Password, Joined) OUTPUT INSERTED.Id VALUES (@Name, @Bio, @Title, @Avatar," +
-                "                            @Email, @Password, @Joined)", conn);
-            cmd.Parameters.AddWithValue("@Name", author.Name ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Bio", author.Bio ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Title", author.Title ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Avatar", author.Avatar ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Email", author.Email ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Password", author.Password ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Joined", author.Joined);
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
 
-            conn.Open();
-            return (int)cmd.ExecuteScalar();
+                string commandString = @"
+                    INSERT INTO Authors (Name, Bio, Title, Avatar, Email, Password, Joined) 
+                    OUTPUT INSERTED.Id 
+                    VALUES (@Name, @Bio, @Title, @Avatar, @Email, @Password, @Joined)";
+
+                using (var cmd = new SqlCommand(commandString, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", (object?)author.Name ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Bio", (object?)author.Bio ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Title", (object?)author.Title ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Avatar", (object?)author.Avatar ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Email", (object?)author.Email ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Password", (object?)author.Password ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Joined", author.Joined);
+
+                    var authorId = (int)cmd.ExecuteScalar();
+                    return authorId;
+                }
+            }
         }
 
         public Author? GetAuthorById(int id)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT Id, Name, Bio FROM Authors WHERE Id = @Id", conn);
-            cmd.Parameters.AddWithValue("@Id", id);
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            using (var conn = new SqlConnection(_connectionString))
             {
-                return new Author
+                conn.Open();
+
+                string commandString = @"
+                    SELECT Id, Name, Bio, Title, Avatar, Email, Password, Joined 
+                    FROM Authors 
+                    WHERE Id = @Id";
+
+                using (var cmd = new SqlCommand(commandString, conn))
                 {
-                    Id = reader.GetInt32(0),
-                    Name = reader.IsDBNull(1) ? null : reader.GetString(1),
-                    Bio = reader.IsDBNull(2) ? null : reader.GetString(2)
-                };
+                    cmd.Parameters.AddWithValue("@Id", id);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        int idOrdinal = reader.GetOrdinal("Id");
+                        int nameOrdinal = reader.GetOrdinal("Name");
+                        int bioOrdinal = reader.GetOrdinal("Bio");
+                        int titleOrdinal = reader.GetOrdinal("Title");
+                        int avatarOrdinal = reader.GetOrdinal("Avatar");
+                        int emailOrdinal = reader.GetOrdinal("Email");
+                        int passwordOrdinal = reader.GetOrdinal("Password");
+                        int joinedOrdinal = reader.GetOrdinal("Joined");
+
+                        if (reader.Read())
+                        {
+                            return new Author
+                            {
+                                Id = reader.GetInt32(idOrdinal),
+                                Name = reader.GetString(nameOrdinal),
+                                Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
+                                Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
+                                Avatar = reader.IsDBNull(avatarOrdinal) ? null : reader.GetString(avatarOrdinal),
+                                Email = reader.GetString(emailOrdinal),
+                                Password = reader.GetString(passwordOrdinal),
+                                Joined = reader.GetDateTime(joinedOrdinal)
+                            };
+                        }
+                    }
+                }
+                return null;
             }
-            return null;
         }
 
         public List<Author> GetAllAuthors()
         {
             var authors = new List<Author>();
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT Id, Name, Bio, Title, Joined FROM Authors", conn);
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            using (var conn = new SqlConnection(_connectionString))
             {
-                authors.Add(new Author
+                conn.Open();
+
+                string commandString = @"
+                    SELECT Id, Name, Bio, Title, Avatar, Email, Password, Joined 
+                    FROM Authors";
+
+                using (var cmd = new SqlCommand(commandString, conn))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    Id = reader.GetInt32(0),
-                    Name = reader.IsDBNull(1) ? null : reader.GetString(1),
-                    Bio = reader.IsDBNull(2) ? null : reader.GetString(2),
-                    Title = reader.IsDBNull(3) ? null : reader.GetString(3),
-                    Joined = reader.GetDateTime(4),
-                });
+                    int idOrdinal = reader.GetOrdinal("Id");
+                    int nameOrdinal = reader.GetOrdinal("Name");
+                    int bioOrdinal = reader.GetOrdinal("Bio");
+                    int titleOrdinal = reader.GetOrdinal("Title");
+                    int avatarOrdinal = reader.GetOrdinal("Avatar");
+                    int emailOrdinal = reader.GetOrdinal("Email");
+                    int passwordOrdinal = reader.GetOrdinal("Password");
+                    int joinedOrdinal = reader.GetOrdinal("Joined");
+
+                    while (reader.Read())
+                    {
+                        authors.Add(new Author
+                        {
+                            Id = reader.GetInt32(idOrdinal),
+                            Name = reader.GetString(nameOrdinal),
+                            Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
+                            Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
+                            Avatar = reader.IsDBNull(avatarOrdinal) ? null : reader.GetString(avatarOrdinal),
+                            Email = reader.GetString(emailOrdinal),
+                            Password = reader.GetString(passwordOrdinal),
+                            Joined = reader.GetDateTime(joinedOrdinal)
+                        });
+                    }
+                }
             }
             return authors;
+        }
+
+        public bool UpdateAuthor(Author author)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                string commandString = @"
+                    UPDATE Authors 
+                    SET Name = @Name,
+                        Bio = @Bio,
+                        Title = @Title,
+                        Avatar = @Avatar,
+                        Email = @Email,
+                        Password = @Password
+                    WHERE Id = @Id";
+
+                using (var cmd = new SqlCommand(commandString, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", (object?)author.Name ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Bio", (object?)author.Bio ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Title", (object?)author.Title ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Avatar", (object?)author.Avatar ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Email", (object?)author.Email ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Password", (object?)author.Password ?? DBNull.Value);
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        public void DeleteAuthor(int id)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                string commandString = "DELETE FROM Authors WHERE Id = @Id";
+
+                using (var cmd = new SqlCommand(commandString, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

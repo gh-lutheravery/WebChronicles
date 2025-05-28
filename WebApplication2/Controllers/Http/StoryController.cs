@@ -1,10 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebChronicles.Controllers.Business;
+using WebChronicles.Models;
 
-namespace WebApplication2.Controllers.Http
+namespace WebChronicles.Controllers.Http
 {
     public class StoryController : Controller
     {
+        private readonly StoryBusiness _storyBusiness;
+        public StoryController(StoryBusiness storyBusiness) 
+        {
+            _storyBusiness = storyBusiness;    
+        }
+
         // GET: StoryController
         public ActionResult Index()
         {
@@ -14,7 +22,16 @@ namespace WebApplication2.Controllers.Http
         // GET: StoryController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            if (id == 0) 
+            { 
+                return BadRequest();
+            }
+            Story? story = _storyBusiness.GetStory(id);
+
+            if (story == null) {
+                return NotFound();
+            }
+            return View(story);
         }
 
         // GET: StoryController/Create
@@ -26,11 +43,12 @@ namespace WebApplication2.Controllers.Http
         // POST: StoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Story userStory)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                int assignedId = _storyBusiness.CreateStory(userStory);
+                return RedirectToAction("Index", "Home");
             }
             catch
             {

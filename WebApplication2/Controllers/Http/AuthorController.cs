@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using WebApplication2.Controllers.Business;
-using WebApplication2.Models;
-using WebApplication5.ViewModels.User;
+using WebChronicles.Controllers.Business;
+using WebChronicles.Models;
+using WebChronicles.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace WebApplication2.Controllers.Http
+namespace WebChronicles.Controllers.Http
 {
     public class AuthorController : Controller
     {
@@ -18,14 +18,12 @@ namespace WebApplication2.Controllers.Http
             _authorBusiness = authorBusiness;
         }
 
-        // GET: AuthorController
         public ActionResult List()
         {
             List<Author> authors = _authorBusiness.GetAllAuthors();
             return View(authors);
         }
 
-        // GET: AuthorController/Details/5
         public ActionResult Details(int id)
         {
             return View();

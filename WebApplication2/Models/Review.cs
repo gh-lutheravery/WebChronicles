@@ -1,4 +1,4 @@
-﻿namespace WebApplication2.Models
+﻿namespace WebChronicles.Models
 {
     public class Review
     {

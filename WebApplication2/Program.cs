@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
-using WebApplication2.Controllers.Data;
+using WebChronicles.Controllers.Business;
+using WebChronicles.Controllers.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Register data and business classes 
-builder.Services.AddScoped<WebApplication2.Controllers.Data.AuthorData>();
-builder.Services.AddScoped<WebApplication2.Controllers.Data.StoryData>();
-builder.Services.AddScoped<WebApplication2.Controllers.Business.AuthorBusiness>();
-builder.Services.AddScoped<WebApplication2.Controllers.Business.StoryBusiness>();
+builder.Services.AddScoped<AuthorData>();
+builder.Services.AddScoped<StoryData>();
+builder.Services.AddScoped<AuthorBusiness>();
+builder.Services.AddScoped<StoryBusiness>();
 
 var app = builder.Build();
 
@@ -28,6 +29,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+//app.UseMvc(routeBuilder => {
+    
+//});
 
 app.MapControllerRoute(
     name: "default",
