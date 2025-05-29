@@ -115,40 +115,40 @@ namespace WebChronicles.Controllers.Data
                     FROM Stories";
 
                 using (var cmd = new SqlCommand(commandString, conn))
-                using (var reader = cmd.ExecuteReader())
                 {
-                    int idOrdinal = reader.GetOrdinal("Id");
-                    int typeOrdinal = reader.GetOrdinal("Type");
-                    int titleOrdinal = reader.GetOrdinal("Title");
-                    int imageOrdinal = reader.GetOrdinal("Image");
-                    int statusOrdinal = reader.GetOrdinal("Status");
-                    int authorIdOrdinal = reader.GetOrdinal("AuthorId");
-                    int descriptionOrdinal = reader.GetOrdinal("Description");
-                    int postedOrdinal = reader.GetOrdinal("Posted");
-                    int followersOrdinal = reader.GetOrdinal("Followers");
-                    int favoritesOrdinal = reader.GetOrdinal("Favorites");
-                    int viewsOrdinal = reader.GetOrdinal("Views");
-
-                    while (reader.Read())
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        var story = new Story
-                        {
-                            Id = reader.GetInt32(idOrdinal),
-                            Type = reader.IsDBNull(typeOrdinal) ? null : reader.GetString(typeOrdinal),
-                            Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
-                            Image = reader.IsDBNull(imageOrdinal) ? null : reader.GetString(imageOrdinal),
-                            Status = reader.IsDBNull(statusOrdinal) ? null : reader.GetString(statusOrdinal),
-                            AuthorId = reader.GetInt32(authorIdOrdinal),
-                            Description = reader.IsDBNull(descriptionOrdinal) ? null : reader.GetString(descriptionOrdinal),
-                            Posted = reader.GetDateTime(postedOrdinal),
-                            Followers = reader.GetInt32(followersOrdinal),
-                            Favorites = reader.GetInt32(favoritesOrdinal),
-                            Views = reader.GetInt32(viewsOrdinal)
-                        };
+                        int idOrdinal = reader.GetOrdinal("Id");
+                        int typeOrdinal = reader.GetOrdinal("Type");
+                        int titleOrdinal = reader.GetOrdinal("Title");
+                        int imageOrdinal = reader.GetOrdinal("Image");
+                        int statusOrdinal = reader.GetOrdinal("Status");
+                        int authorIdOrdinal = reader.GetOrdinal("AuthorId");
+                        int descriptionOrdinal = reader.GetOrdinal("Description");
+                        int postedOrdinal = reader.GetOrdinal("Posted");
+                        int followersOrdinal = reader.GetOrdinal("Followers");
+                        int favoritesOrdinal = reader.GetOrdinal("Favorites");
+                        int viewsOrdinal = reader.GetOrdinal("Views");
 
-                        story.Author = _authorData.GetAuthorById(story.AuthorId);
-                        story.Tags = GetStoryTags(story.Id);
-                        stories.Add(story);
+                        while (reader.Read())
+                        {
+                            var story = new Story
+                            {
+                                Id = reader.GetInt32(idOrdinal),
+                                Type = reader.GetString(typeOrdinal),
+                                Title = reader.GetString(titleOrdinal),
+                                Image = reader.IsDBNull(imageOrdinal) ? null : reader.GetString(imageOrdinal),
+                                Status = reader.GetString(statusOrdinal),
+                                AuthorId = reader.GetInt32(authorIdOrdinal),
+                                Description = reader.IsDBNull(descriptionOrdinal) ? null : reader.GetString(descriptionOrdinal),
+                                Posted = reader.GetDateTime(postedOrdinal),
+                                Followers = reader.GetInt32(followersOrdinal),
+                                Favorites = reader.GetInt32(favoritesOrdinal),
+                                Views = reader.GetInt32(viewsOrdinal)
+                            };
+
+                            stories.Add(story);
+                        }
                     }
                 }
             }
@@ -219,7 +219,7 @@ namespace WebChronicles.Controllers.Data
         }
 
         // Helper methods for handling relationships
-        private ICollection<Tag> GetStoryTags(int storyId)
+        public List<Tag> GetStoryTags(int storyId)
         {
             var tags = new List<Tag>();
             using var conn = new SqlConnection(_connectionString);

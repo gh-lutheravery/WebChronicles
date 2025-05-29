@@ -22,9 +22,10 @@ namespace WebChronicles.Controllers.Business
             return _authorData.GetAllAuthors();
         }
 
-        public Author GetAuthor(int id) 
+        public Author? GetAuthor(int id) 
         {
-            return _authorData.GetAuthorById(id);
+            Author? author = _authorData.GetAuthorById(id);
+            return author;
         }
 
         public void Register(RegisterViewModel vm, PasswordHasher<Author> hasher)

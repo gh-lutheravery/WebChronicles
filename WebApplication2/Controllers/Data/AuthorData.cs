@@ -101,30 +101,32 @@ namespace WebChronicles.Controllers.Data
                     FROM Authors";
 
                 using (var cmd = new SqlCommand(commandString, conn))
-                using (var reader = cmd.ExecuteReader())
                 {
-                    int idOrdinal = reader.GetOrdinal("Id");
-                    int nameOrdinal = reader.GetOrdinal("Name");
-                    int bioOrdinal = reader.GetOrdinal("Bio");
-                    int titleOrdinal = reader.GetOrdinal("Title");
-                    int avatarOrdinal = reader.GetOrdinal("Avatar");
-                    int emailOrdinal = reader.GetOrdinal("Email");
-                    int passwordOrdinal = reader.GetOrdinal("Password");
-                    int joinedOrdinal = reader.GetOrdinal("Joined");
-
-                    while (reader.Read())
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        authors.Add(new Author
+                        int idOrdinal = reader.GetOrdinal("Id");
+                        int nameOrdinal = reader.GetOrdinal("Name");
+                        int bioOrdinal = reader.GetOrdinal("Bio");
+                        int titleOrdinal = reader.GetOrdinal("Title");
+                        int avatarOrdinal = reader.GetOrdinal("Avatar");
+                        int emailOrdinal = reader.GetOrdinal("Email");
+                        int passwordOrdinal = reader.GetOrdinal("Password");
+                        int joinedOrdinal = reader.GetOrdinal("Joined");
+
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(idOrdinal),
-                            Name = reader.GetString(nameOrdinal),
-                            Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
-                            Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
-                            Avatar = reader.IsDBNull(avatarOrdinal) ? null : reader.GetString(avatarOrdinal),
-                            Email = reader.GetString(emailOrdinal),
-                            Password = reader.GetString(passwordOrdinal),
-                            Joined = reader.GetDateTime(joinedOrdinal)
-                        });
+                            authors.Add(new Author
+                            {
+                                Id = reader.GetInt32(idOrdinal),
+                                Name = reader.GetString(nameOrdinal),
+                                Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
+                                Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
+                                Avatar = reader.IsDBNull(avatarOrdinal) ? null : reader.GetString(avatarOrdinal),
+                                Email = reader.GetString(emailOrdinal),
+                                Password = reader.GetString(passwordOrdinal),
+                                Joined = reader.GetDateTime(joinedOrdinal)
+                            });
+                        }
                     }
                 }
             }
