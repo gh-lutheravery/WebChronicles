@@ -10,9 +10,9 @@
 
         public int AuthorId { get; set; }
 
-        public Author Author { get; set; }
+        public Author? Author { get; set; }
 
-        public string Content { get; set; }
+        public required string Content { get; set; }
 
         public DateTime Posted { get; set; }
     }
