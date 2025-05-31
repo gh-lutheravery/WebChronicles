@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebChronicles.Controllers.Data;
 using WebChronicles.Models;
@@ -31,14 +32,19 @@ namespace WebChronicles.Controllers.Business
             }
             return story;
         }
-
-        public int CreateStory(Story userStory)
+        
+        public int? CreateStory(Story userStory, ClaimsPrincipal claims)
         {
+            string? idValue = claims.FindFirstValue("ID");
+            if (string.IsNullOrEmpty(idValue))
+                return null;
+            
+            int userId = Int32.Parse(idValue);
             userStory.Views = 0;
             userStory.Favorites = 0;
             userStory.Followers = 0;
             userStory.Posted = DateTime.Now;
-            userStory.AuthorId = 1;
+            userStory.AuthorId = userId;
 
             int id = _storyData.CreateStory(userStory);
             return id;

@@ -89,6 +89,52 @@ namespace WebChronicles.Controllers.Data
             }
         }
 
+        public Author? GetAuthorByEmail(string email)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                string commandString = @"
+                    SELECT Id, Name, Bio, Title, Avatar, Email, Password, Joined 
+                    FROM Authors 
+                    WHERE Email = @Email";
+
+                using (var cmd = new SqlCommand(commandString, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        int idOrdinal = reader.GetOrdinal("Id");
+                        int nameOrdinal = reader.GetOrdinal("Name");
+                        int bioOrdinal = reader.GetOrdinal("Bio");
+                        int titleOrdinal = reader.GetOrdinal("Title");
+                        int avatarOrdinal = reader.GetOrdinal("Avatar");
+                        int emailOrdinal = reader.GetOrdinal("Email");
+                        int passwordOrdinal = reader.GetOrdinal("Password");
+                        int joinedOrdinal = reader.GetOrdinal("Joined");
+
+                        if (reader.Read())
+                        {
+                            return new Author
+                            {
+                                Id = reader.GetInt32(idOrdinal),
+                                Name = reader.GetString(nameOrdinal),
+                                Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
+                                Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
+                                Avatar = reader.IsDBNull(avatarOrdinal) ? null : reader.GetString(avatarOrdinal),
+                                Email = reader.GetString(emailOrdinal),
+                                Password = reader.GetString(passwordOrdinal),
+                                Joined = reader.GetDateTime(joinedOrdinal)
+                            };
+                        }
+                    }
+                }
+                return null;
+            }
+        }
+
         public List<Author> GetAllAuthors()
         {
             var authors = new List<Author>();

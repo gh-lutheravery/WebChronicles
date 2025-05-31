@@ -5,6 +5,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using WebChronicles.Models;
 using WebChronicles.Controllers.Data;
 using WebChronicles.ViewModels;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WebChronicles.Controllers.Business
 {
@@ -30,15 +33,60 @@ namespace WebChronicles.Controllers.Business
 
         public void Register(RegisterViewModel vm, PasswordHasher<Author> hasher)
         {
-            string hashed = hasher.HashPassword(new Author(), vm.Password);
-
-            Author profile = new Author();
-            profile.Name = vm.Name;
-            profile.Email = vm.Email;
+            Author profile = new Author() 
+            {
+                Name = vm.Name,
+                Email = vm.Email,
+                Password = string.Empty,
+                Joined = DateTime.UtcNow
+            };
+            string hashed = hasher.HashPassword(profile, vm.Password);
             profile.Password = hashed;
-            profile.Joined = DateTime.UtcNow;
 
             _authorData.CreateAuthor(profile);
         }
+
+        public Author? ValidateLogin(LoginViewModel vm, PasswordHasher<Author> hasher)
+        {
+            Author? author = _authorData.GetAuthorByEmail(vm.Email);
+
+            if (author == null)
+                return null;
+
+            var result = hasher.VerifyHashedPassword(author, author.Password, vm.Password);
+            if (result == PasswordVerificationResult.Success)
+                return author;
+            else
+                return null;
+        }
+
+
+        // if user is found, make a claim based on the user id and configure cookie settings
+        public (ClaimsIdentity, AuthenticationProperties)?
+            AuthenticateUser(LoginViewModel vm, PasswordHasher<Author> hasher)
+        { 
+            var profile = ValidateLogin(vm, hasher);
+            if (profile == null)
+                return null;
+
+            var claims = new List<Claim>
+            {
+                new Claim("ID", profile.Id.ToString()),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1),
+                IsPersistent = false,
+                RedirectUri = ""
+            };
+
+            return (claimsIdentity, authProperties);
+        }
+
     }
 }
