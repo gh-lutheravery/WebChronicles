@@ -88,5 +88,10 @@ namespace WebChronicles.Controllers.Business
             return (claimsIdentity, authProperties);
         }
 
+        //UpdateAuthor
+        public bool UpdateAuthor(Author author)
+        {
+            return _authorData.UpdateAuthor(author);
+        }
     }
 }

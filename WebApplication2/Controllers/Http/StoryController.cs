@@ -23,14 +23,13 @@ namespace WebChronicles.Controllers.Http
         public ActionResult Details(int id)
         {
             if (id == 0) 
-            { 
                 return BadRequest();
-            }
+            
             Story? story = _storyBusiness.GetStory(id);
 
-            if (story == null) {
+            if (story == null) 
                 return NotFound();
-            }
+
             return View(story);
         }
 
@@ -47,8 +46,11 @@ namespace WebChronicles.Controllers.Http
         {
             try
             {
-                int assignedId = _storyBusiness.CreateStory(userStory);
-                return RedirectToAction("Index", "Home");
+                int? assignedId = _storyBusiness.CreateStory(userStory, User);
+                if (assignedId == null)
+                    return BadRequest();
+                
+                return RedirectToAction("Details", new { id = assignedId });
             }
             catch
             {

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication2.Controllers.Data;
-using WebApplication2.ViewModels;
+using WebChronicles.Controllers.Data;
+using WebChronicles.ViewModels;
 using WebChronicles.Controllers.Business;
 
 namespace WebChronicles.Controllers.Http

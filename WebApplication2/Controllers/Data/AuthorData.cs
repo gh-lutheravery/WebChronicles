@@ -204,7 +204,7 @@ namespace WebChronicles.Controllers.Data
                     cmd.Parameters.AddWithValue("@Email", (object?)author.Email ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Password", (object?)author.Password ?? DBNull.Value);
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteNonQuery() == 1;
                 }
             }
         }

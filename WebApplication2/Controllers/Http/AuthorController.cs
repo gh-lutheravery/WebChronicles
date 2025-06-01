@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using System.Security.Claims;
 using WebChronicles.Controllers.Business;
 using WebChronicles.Models;
 using WebChronicles.ViewModels;
@@ -26,24 +29,43 @@ namespace WebChronicles.Controllers.Http
 
         public ActionResult Details(int id)
         {
-            return View();
+            if (id == 0)
+                return BadRequest();
+
+            Author? author = _authorBusiness.GetAuthor(id);
+            if (author == null)
+                return NotFound();
+
+            return View(author);
         }
 
-        // GET: AuthorController/Create
-        public ActionResult Register()
+        public ActionResult Login()
         {
-            var vm = new RegisterViewModel();
-            return View("Register", vm);
+            var vm = new LoginViewModel();
+            return View("Login", vm);
         }
 
-        // POST: AuthorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel vm)
+        public ActionResult Login(LoginViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                _authorBusiness.Register(vm, new PasswordHasher<Author>());
+                var loginInfo = _authorBusiness.AuthenticateUser(vm, new PasswordHasher<Author>());
+                if (loginInfo == null)
+                {
+                    ViewData["IncorrectInput"] = "Your email or password is incorrect; try again.";
+                    return View(vm);
+                }
+
+                var claims = loginInfo.Value.Item1;
+                var authProperties = loginInfo.Value.Item2;
+
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claims),
+                    authProperties);
+
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -52,24 +74,62 @@ namespace WebChronicles.Controllers.Http
             }
         }
 
-        // GET: AuthorController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Logout()
         {
-            return View();
+            HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
-        // POST: AuthorController/Edit/5
+        public ActionResult Register()
+        {
+            var vm = new RegisterViewModel();
+            return View("Register", vm);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Register(RegisterViewModel vm)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _authorBusiness.Register(vm, new PasswordHasher<Author>());
+                return RedirectToAction("Login");
             }
-            catch
+            else
             {
-                return View();
+                return View(vm);
+            }
+        }
+
+        public IActionResult Update(int id)
+        {
+            // Get the existing author to populate the form
+            var author = _authorBusiness.GetAuthor(id);
+
+            if (author == null)
+                return NotFound();
+
+            return View(author);
+        }
+
+        [HttpPost]
+        public IActionResult Update(Author author)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(author);
+            }
+
+            bool updateSuccess = _authorBusiness.UpdateAuthor(author);
+
+            if (updateSuccess)
+            {
+                return RedirectToAction("Details", new { id = author.Id });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Failed to update author. Please try again.");
+                return View(author);
             }
         }
 
