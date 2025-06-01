@@ -28,7 +28,7 @@ namespace WebChronicles.Controllers.Business
             if (story != null) 
             {
                 story.Author = _authorData.GetAuthorById(story.AuthorId);
-                story.Tags = _storyData.GetStoryTags(id);
+                //story.Tags = _storyData.GetStoryTags(id);
             }
             return story;
         }

@@ -13,13 +13,11 @@ namespace WebChronicles.Controllers.Http
             _storyBusiness = storyBusiness;    
         }
 
-        // GET: StoryController
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: StoryController/Details/5
         public ActionResult Details(int id)
         {
             if (id == 0) 
@@ -33,13 +31,11 @@ namespace WebChronicles.Controllers.Http
             return View(story);
         }
 
-        // GET: StoryController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: StoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Story userStory)
@@ -58,13 +54,11 @@ namespace WebChronicles.Controllers.Http
             }
         }
 
-        // GET: StoryController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: StoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -79,13 +73,11 @@ namespace WebChronicles.Controllers.Http
             }
         }
 
-        // GET: StoryController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: StoryController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

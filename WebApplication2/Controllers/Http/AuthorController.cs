@@ -103,7 +103,7 @@ namespace WebChronicles.Controllers.Http
 
         public IActionResult Update(int id)
         {
-            // Get the existing author to populate the form
+            // get existing data to populate form
             var author = _authorBusiness.GetAuthor(id);
 
             if (author == null)
@@ -133,13 +133,11 @@ namespace WebChronicles.Controllers.Http
             }
         }
 
-        // GET: AuthorController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

@@ -82,13 +82,12 @@ namespace WebChronicles.Controllers.Business
                 AllowRefresh = true,
                 ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1),
                 IsPersistent = false,
-                RedirectUri = ""
+                RedirectUri = string.Empty
             };
 
             return (claimsIdentity, authProperties);
         }
 
-        //UpdateAuthor
         public bool UpdateAuthor(Author author)
         {
             return _authorData.UpdateAuthor(author);

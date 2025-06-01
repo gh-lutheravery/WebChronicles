@@ -155,7 +155,6 @@ namespace WebChronicles.Controllers.Data
             return stories;
         }
 
-        // Update
         public bool UpdateStory(Story story)
         {
             using (var conn = new SqlConnection(_connectionString))
@@ -191,23 +190,16 @@ namespace WebChronicles.Controllers.Data
                     cmd.Parameters.AddWithValue("@Views", story.Views);
 
                     var result = cmd.ExecuteNonQuery() > 0;
-                    // Update Tags relationship if needed
-                    // if (story.Tags != null) { UpdateStoryTags(story.Id, story.Tags); }
                     return result;
                 }
             }
         }
 
-        // Delete
         public bool DeleteStory(int id)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-
-                // First delete related records in junction tables if needed
-                // DeleteStoryTags(id);
-                // DeleteStoryChapters(id);
 
                 string commandString = "DELETE FROM Stories WHERE Id = @Id";
                 using (var cmd = new SqlCommand(commandString, conn))
@@ -216,30 +208,6 @@ namespace WebChronicles.Controllers.Data
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
-        }
-
-        // Helper methods for handling relationships
-        public List<Tag> GetStoryTags(int storyId)
-        {
-            var tags = new List<Tag>();
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand(@"
-                SELECT t.Id, t.Title
-                FROM StoryTags st 
-                JOIN Tags t ON st.TagId = t.Id 
-                WHERE st.StoryId = @StoryId", conn);
-            cmd.Parameters.AddWithValue("@StoryId", storyId);
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tags.Add(new Tag
-                {
-                    Id = reader.GetInt32(0),
-                    Title = reader.GetString(1)
-                });
-            }
-            return tags;
         }
     }
 }
