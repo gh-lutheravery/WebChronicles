@@ -103,6 +103,10 @@ namespace WebChronicles.Controllers.Http
 
         public IActionResult Update(int id)
         {
+            // checks if this user is the one they are trying to update
+            if (!User.Claims.Any(c => c.Type == "ID" && c.Value == id.ToString()))
+                return Unauthorized();
+            
             // get existing data to populate form
             var author = _authorBusiness.GetAuthor(id);
 
@@ -115,10 +119,8 @@ namespace WebChronicles.Controllers.Http
         [HttpPost]
         public IActionResult Update(Author author)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(author);
-            }
+            if (!User.Claims.Any(c => c.Type == "ID" && c.Value == author.Id.ToString()))
+                return Unauthorized();
 
             bool updateSuccess = _authorBusiness.UpdateAuthor(author);
 
@@ -128,7 +130,7 @@ namespace WebChronicles.Controllers.Http
             }
             else
             {
-                ModelState.AddModelError("", "Failed to update author. Please try again.");
+                ModelState.AddModelError("", "Please try again.");
                 return View(author);
             }
         }

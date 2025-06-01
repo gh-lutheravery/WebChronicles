@@ -189,7 +189,7 @@ namespace WebChronicles.Controllers.Data
                     cmd.Parameters.AddWithValue("@Favorites", story.Favorites);
                     cmd.Parameters.AddWithValue("@Views", story.Views);
 
-                    var result = cmd.ExecuteNonQuery() > 0;
+                    var result = cmd.ExecuteNonQuery() == 1;
                     return result;
                 }
             }

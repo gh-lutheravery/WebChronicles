@@ -191,20 +191,21 @@ namespace WebChronicles.Controllers.Data
                         Bio = @Bio,
                         Title = @Title,
                         Avatar = @Avatar,
-                        Email = @Email,
-                        Password = @Password
+                        Email = @Email
                     WHERE Id = @Id";
 
                 using (var cmd = new SqlCommand(commandString, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Name", (object?)author.Name ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Name", author.Name);
                     cmd.Parameters.AddWithValue("@Bio", (object?)author.Bio ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Title", (object?)author.Title ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Avatar", (object?)author.Avatar ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Email", (object?)author.Email ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Password", (object?)author.Password ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Email", author.Email);
+                    cmd.Parameters.AddWithValue("@Id", author.Id);
 
-                    return cmd.ExecuteNonQuery() == 1;
+                    if (cmd.ExecuteNonQuery() == 1)
+                        return true;
+                    return false;
                 }
             }
         }
