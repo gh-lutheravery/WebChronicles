@@ -29,9 +29,9 @@ namespace WebChronicles.Controllers.Data
 
                 using (var cmd = new SqlCommand(commandString, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Title", (object?)chapter.Title ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Title", chapter.Title);
                     cmd.Parameters.AddWithValue("@Posted", chapter.Posted);
-                    cmd.Parameters.AddWithValue("@Content", (object?)chapter.Content ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Content", chapter.Content);
                     cmd.Parameters.AddWithValue("@StoryId", chapter.StoryId);
 
                     var chapterId = (int)cmd.ExecuteScalar();
@@ -95,6 +95,7 @@ namespace WebChronicles.Controllers.Data
 
                 using (var cmd = new SqlCommand(commandString, conn))
                 {
+                    cmd.Parameters.AddWithValue("@StoryId", storyId);
                     using (var reader = cmd.ExecuteReader())
                     {
                         int idOrdinal = reader.GetOrdinal("Id");
@@ -103,7 +104,6 @@ namespace WebChronicles.Controllers.Data
                         int contentOrdinal = reader.GetOrdinal("Content");
                         int storyIdOrdinal = reader.GetOrdinal("StoryId");
 
-                        cmd.Parameters.AddWithValue("@StoryId", storyId);
 
                         while (reader.Read())
                         {
@@ -161,8 +161,10 @@ namespace WebChronicles.Controllers.Data
                 using (var cmd = new SqlCommand(commandString, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
-                    return cmd.ExecuteNonQuery() > 0;
+                    var result = cmd.ExecuteNonQuery() == 1;
+                    return result;
                 }
+            
             }
         }
     }

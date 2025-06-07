@@ -19,7 +19,9 @@ namespace WebChronicles.Controllers.Business
 
         public List<Chapter> GetAllChapters(int storyId)
         {
-            return _chapterData.GetAllChaptersByStoryId(storyId);
+            var chapters = _chapterData.GetAllChaptersByStoryId(storyId);
+            chapters.OrderBy((x) => x.Posted);
+            return chapters;
         }
 
         public Chapter? GetChapter(int id) 
@@ -30,13 +32,13 @@ namespace WebChronicles.Controllers.Business
         
         public int? CreateChapter(Chapter chapter, ClaimsPrincipal claims)
         {
-            // Verify user is authenticated
+            // Verify user is allowed to create a chapter for this story
             string? idValue = claims.FindFirstValue("ID");
             Story? story = _storyBusiness.GetStory(chapter.StoryId);
             if (story == null)
                 return null;
 
-            if (string.IsNullOrEmpty(idValue) || story.AuthorId == Int32.Parse(idValue))
+            if (string.IsNullOrEmpty(idValue) || story.AuthorId != Int32.Parse(idValue))
                 return null;
 
             chapter.Posted = DateTime.Now;
