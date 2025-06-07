@@ -9,12 +9,12 @@ namespace WebChronicles.Controllers.Business
     public class ChapterBusiness
     {
         private readonly ChapterData _chapterData;
-        private readonly StoryBusiness _storyBusiness;
+        private readonly StoryData _storyData;
 
-        public ChapterBusiness(ChapterData chapterData, StoryBusiness storyBusiness)
+        public ChapterBusiness(ChapterData chapterData, StoryData storyData)
         {
             _chapterData = chapterData;
-            _storyBusiness = storyBusiness;
+            _storyData = storyData;
         }
 
         public List<Chapter> GetAllChapters(int storyId)
@@ -34,7 +34,7 @@ namespace WebChronicles.Controllers.Business
         {
             // Verify user is allowed to create a chapter for this story
             string? idValue = claims.FindFirstValue("ID");
-            Story? story = _storyBusiness.GetStory(chapter.StoryId);
+            Story? story = _storyData.GetStoryById(chapter.StoryId);
             if (story == null)
                 return null;
 

@@ -4,9 +4,9 @@ namespace WebChronicles.ViewModels
 {
     public class ChapterViewModel
     {
-        public required Story Story { get; set; }
-        public required Chapter Chapter { get; set; }
-        public required Chapter PreviousChapter { get; set; }
-        public required Chapter NextChapter { get; set; }
+        public  Story Story { get; set; }
+        public  Chapter Chapter { get; set; }
+        public  int PreviousChapterId { get; set; }
+        public  int NextChapterId { get; set; }
     }
 }

@@ -14,10 +14,11 @@ namespace WebChronicles.Controllers.Business
 
         private readonly ChapterBusiness _chapterBusiness;
 
-        public StoryBusiness(StoryData storyData, AuthorData authorData)
+        public StoryBusiness(StoryData storyData, AuthorData authorData, ChapterBusiness chapterBusiness)
         {
             _storyData = storyData;
             _authorData = authorData;
+            _chapterBusiness = chapterBusiness;
         }
 
         public List<Story> GetAllStories()
