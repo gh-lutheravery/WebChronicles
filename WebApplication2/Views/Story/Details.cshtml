@@ -50,5 +50,33 @@
             @Html.DisplayFor(model => model.Views)
         </dd>
     </dl>
+
+    <div>
+        <h5>Author</h5>
+        <dl class="row">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Author.Name)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Author.Name)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Author.Title)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Author.Title)
+            </dd>
+        </dl>
+    </div>
+
+    @if (User.Claims.Where(c => c.Type == "ID").Any() && User.Claims.Where(c => c.Value == Model.AuthorId.ToString()).Any())
+    {
+        <div>
+            <a class="btn btn-primary" href="@Url.Action("StoryUpdate", "Story", new { id = Model.Id })">Edit</a>
+            <a class="btn btn-danger" href="@Url.Action("StoryDelete", "Story", new { id = Model.Id })">Delete</a>
+        </div>
+    }
+
 </div>
+
 

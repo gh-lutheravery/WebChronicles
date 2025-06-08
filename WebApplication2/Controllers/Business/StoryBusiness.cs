@@ -12,13 +12,10 @@ namespace WebChronicles.Controllers.Business
         private readonly StoryData _storyData;
         private readonly AuthorData _authorData;
 
-        private readonly ChapterBusiness _chapterBusiness;
-
-        public StoryBusiness(StoryData storyData, AuthorData authorData, ChapterBusiness chapterBusiness)
+        public StoryBusiness(StoryData storyData, AuthorData authorData)
         {
             _storyData = storyData;
             _authorData = authorData;
-            _chapterBusiness = chapterBusiness;
         }
 
         public List<Story> GetAllStories()
@@ -52,41 +49,6 @@ namespace WebChronicles.Controllers.Business
 
             int id = _storyData.CreateStory(userStory);
             return id;
-        }
-
-        internal ChapterViewModel? GetChapterViewModel(int id)
-        {
-            ChapterViewModel viewModel = new ChapterViewModel();
-
-            var currentChapter = _chapterBusiness.GetChapter(id);
-            if (currentChapter == null)
-                return null;
-
-            int storyId = currentChapter.StoryId;
-
-            Story? story = GetStory(storyId);
-            if (story == null)
-                return null;
-
-            var chapters = _chapterBusiness.GetAllChapters(storyId);
-
-            // find current chapter's index
-            var currentIndex = chapters.FindIndex(c => c.Id == id);
-            if (currentIndex != -1)
-            {
-                viewModel.PreviousChapterId = currentIndex > 0 ? chapters[currentIndex - 1].Id : 0;
-                viewModel.NextChapterId = currentIndex < chapters.Count - 1 ? chapters[currentIndex + 1].Id : 0;
-            }
-            else
-            {
-                viewModel.PreviousChapterId = 0;
-                viewModel.NextChapterId = 0;
-            }
-
-            viewModel.Story = story;
-            viewModel.Chapter = currentChapter;
-
-            return viewModel;
         }
     }
 }

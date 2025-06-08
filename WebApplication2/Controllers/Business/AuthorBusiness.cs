@@ -74,9 +74,11 @@ namespace WebChronicles.Controllers.Business
                 new Claim("ID", profile.Id.ToString()),
             };
 
+            // make identity with default authentication scheme
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+            // set properties for the cookie
             var authProperties = new AuthenticationProperties
             {
                 AllowRefresh = true,

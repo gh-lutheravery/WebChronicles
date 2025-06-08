@@ -61,6 +61,7 @@ namespace WebChronicles.Controllers.Http
                 var claims = loginInfo.Value.Item1;
                 var authProperties = loginInfo.Value.Item2;
 
+                // sends the cookie to the browser
                 HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claims),
